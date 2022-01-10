@@ -10,44 +10,33 @@ export default function Nav() {
     <nav>
       <ul className="nav">
         <li>
-          <Link to="/">
-            Home
-          </Link>
+          <Link to="/">Home</Link>
         </li>
         {!loggedIn ? (
           <>
             <li>
-              <Link to="/log-in">
-                Log In
-              </Link>
+              <Link to="/log-in">Log In</Link>
             </li>
             <li>
-              <Link to="/sign-up">
-                Sign Up
-              </Link>
+              <Link to="/sign-up">Sign Up</Link>
+            </li>
+            <li>
+              <Link to="/query-demo">LoginRQ</Link>
             </li>
           </>
         ) : (
           <>
             <li>
-              <Link to="/members">
-                Members
-              </Link>
+              <Link to="/members">Members</Link>
             </li>
             <li>
-              <Link to="/create-post">
-                Create Post
-              </Link>
+              <Link to="/create-post">Create Post</Link>
             </li>
             <li>
-              <Link to="/profile">
-                Profile
-              </Link>
+              <Link to="/profile">Profile</Link>
             </li>
             <li>
-              <Link to="/log-out">
-                Log Out
-              </Link>
+              <Link to="/log-out">Log Out</Link>
             </li>
           </>
         )}
