@@ -1,6 +1,20 @@
-import { useQuery, gql, ApolloError } from "@apollo/client";
-import React, { createContext, useContext, ReactNode } from "react";
+// import { useQuery, gql, ApolloError } from "@apollo/client";
 
+import React, { createContext, useContext, ReactNode } from "react";
+import { useQuery } from "react-query";
+import gql from "graphql-tag";
+import { GraphQLClient } from "graphql-request";
+// static public data
+const headers: RequestInit = {
+  headers: {
+    // authorization: `Bearer token goes here ${token && token || 'demotoken'}`
+  },
+  credentials: "include",
+  mode: "cors",
+};
+const endpoint = `${process.env.GATSBY_WORDPRESS_API_URL}`;
+const graphQLClient = new GraphQLClient(endpoint, headers);
+//
 export interface User {
   id: string;
   databaseId: number;
@@ -12,21 +26,21 @@ export interface User {
 
 interface AuthData {
   loggedIn: boolean;
-  user?: User,
-  loading: boolean;
-  error?: ApolloError;
+  user?: User;
+  isLoading: boolean;
+  // error?: ApolloError;
 }
 
 const DEFAULT_STATE: AuthData = {
   loggedIn: false,
   user: undefined,
-  loading: false,
-  error: undefined,
+  isLoading: false,
+  // error: undefined,
 };
 
 const AuthContext = createContext(DEFAULT_STATE);
 
-export const GET_USER = gql`
+export const GET_USER_CREDENTIAL = gql`
   query getUser {
     viewer {
       id
@@ -39,15 +53,25 @@ export const GET_USER = gql`
   }
 `;
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const { data, loading, error } = useQuery(GET_USER);
-  const user = data?.viewer;
-  const loggedIn = Boolean(user);
+export const fetchUserCredential = async () => {
+  // get the user data, user will have to be authenticated
+  return await graphQLClient.request(GET_USER_CREDENTIAL);
+};
 
+export function AuthProvider({ children }: { children: ReactNode }) {
+  //
+  const { data, isLoading, error } = useQuery(
+    "user-login-creds",
+    fetchUserCredential,
+    { staleTime: 1000 * 60 * 3 }
+    // { staleTime: 1000 * 60 * 60 }
+  );
+  const user = data?.viewer || null;
+  const loggedIn = Boolean(user);
   const value = {
     loggedIn,
     user,
-    loading,
+    isLoading,
     error,
   };
 
