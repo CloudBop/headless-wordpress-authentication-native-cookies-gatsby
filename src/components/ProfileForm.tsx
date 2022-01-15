@@ -2,20 +2,23 @@ import * as React from "react";
 import { useMutation, gql } from "@apollo/client";
 
 import useAuth, { User } from "../hooks/useAuth";
+import { useUser } from "../hooks/useUser";
 
 const UPDATE_PROFILE = gql`
   mutation updateProfile(
     $id: ID!
-    $firstName: String!,
-    $lastName: String!,
+    $firstName: String!
+    $lastName: String!
     $email: String!
   ) {
-    updateUser(input: {
-      id: $id
-      firstName: $firstName
-      lastName: $lastName
-      email: $email
-    }) {
+    updateUser(
+      input: {
+        id: $id
+        firstName: $firstName
+        lastName: $lastName
+        email: $email
+      }
+    ) {
       user {
         databaseId
       }
@@ -24,7 +27,7 @@ const UPDATE_PROFILE = gql`
 `;
 
 export default function ProfileForm() {
-  const { user } = useAuth();
+  const { user } = useUser();
   const { id, firstName, lastName, email } = user as User;
   const [updateProfile, { data, loading, error }] = useMutation(UPDATE_PROFILE);
   const wasProfileUpdated = Boolean(data?.updateUser?.user?.databaseId);
@@ -34,8 +37,8 @@ export default function ProfileForm() {
     const data = new FormData(event.currentTarget);
     const values = Object.fromEntries(data);
     updateProfile({
-      variables: { id, ...values, },
-    }).catch(error => {
+      variables: { id, ...values },
+    }).catch((error) => {
       console.error(error);
     });
   }
@@ -53,7 +56,7 @@ export default function ProfileForm() {
           id="profile-first-name"
           type="text"
           name="firstName"
-          defaultValue={firstName || ''}
+          defaultValue={firstName || ""}
           autoComplete="given-name"
         />
         <label htmlFor="profile-last-name">Last Name</label>
@@ -61,7 +64,7 @@ export default function ProfileForm() {
           id="profile-last-name"
           type="text"
           name="lastName"
-          defaultValue={lastName || ''}
+          defaultValue={lastName || ""}
           autoComplete="family-name"
         />
         <label htmlFor="profile-email">Email</label>
@@ -69,14 +72,12 @@ export default function ProfileForm() {
           id="profile-email"
           type="email"
           name="email"
-          defaultValue={email || ''}
+          defaultValue={email || ""}
           autoComplete="email"
         />
-        {error ? (
-          <p className="error-message">{error.message}</p>
-        ) : null}
+        {error ? <p className="error-message">{error.message}</p> : null}
         <button type="submit" disabled={loading}>
-          {loading ? 'Updating...' : 'Update'}
+          {loading ? "Updating..." : "Update"}
         </button>
       </fieldset>
     </form>
