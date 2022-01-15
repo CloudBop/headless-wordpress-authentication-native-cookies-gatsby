@@ -1,50 +1,51 @@
 import * as React from "react";
-import { useMutation, gql } from "@apollo/client";
-
-const SEND_PASSWORD_RESET_EMAIL = gql`
-  mutation sendPasswordResetEmail($username: String!) {
-    sendPasswordResetEmail(
-      input: { username: $username }
-    ) {
-      user {
-        databaseId
-      }
-    }
-  }
-`;
+import { useMutation } from "react-query";
+import { wpgraphqlSendPasswordResetEmail } from "../wpgraphqlApi/userSettings";
 
 export default function SendPasswordResetEmailForm() {
-  const [sendPasswordResetEmail, { loading, error, data }] = useMutation(
-    SEND_PASSWORD_RESET_EMAIL
-  );
-  const wasEmailSent = Boolean(data?.sendPasswordResetEmail?.user?.databaseId);
+  const {
+    data,
+    error,
+    isError,
+    isIdle,
+    isLoading,
+    isPaused,
+    isSuccess,
+    mutate,
+    mutateAsync,
+    reset,
+    status,
+  } = useMutation(wpgraphqlSendPasswordResetEmail);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const { email } = Object.fromEntries(data);
-    sendPasswordResetEmail({
+    mutate({
       variables: {
         username: email,
-      }
-    }).catch(error => {
-      console.error(error);
+      },
     });
   }
-
-  if (wasEmailSent) {
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing_operator
+  const wasEmailSent =
+    // returns as 0 if successful (basically coerce 0 to truthy)
+    data?.sendPasswordResetEmail?.user?.databaseId ?? undefined;
+  if (wasEmailSent || wasEmailSent === 0) {
     return (
-      <p> Please check your email. A password reset link has been sent to you.</p>
+      <p style={{ backgroundColor: "#264d4b", color: "#92dddb" }}>
+        Please check your email. A password reset link has been sent to you.
+      </p>
     );
   }
 
   return (
     <form method="post" onSubmit={handleSubmit}>
       <p>
-        Enter the email associated with your account and you&#39;ll be sent a link
-        to reset your password.
+        Enter the email associated with your account and you&#39;ll be sent a
+        link to reset your password.
       </p>
-      <fieldset disabled={loading} aria-busy={loading}>
+      <fieldset disabled={isLoading} aria-busy={isLoading}>
         <label htmlFor="password-reset-email">Email</label>
         <input
           id="password-reset-email"
@@ -53,11 +54,11 @@ export default function SendPasswordResetEmailForm() {
           autoComplete="email"
           required
         />
-        {error ? (
-          <p className="error-message">{error.message}</p>
+        {error instanceof Error ? (
+          <p className="error-message">{error?.message}</p>
         ) : null}
-        <button type="submit" disabled={loading}>
-          {loading ? 'Sending...' : 'Send password reset email'}
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? "Sending..." : "Send password reset email"}
         </button>
       </fieldset>
     </form>
