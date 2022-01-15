@@ -1,9 +1,9 @@
 import * as React from "react";
-import { useEffect } from "react";
-import { useMutation, gql } from "@apollo/client";
 import Layout from "../components/Layout";
-import { useUser } from "../hooks/useUser";
 import LogOutForm from "../components/LogoutForm";
+// import { useEffect } from "react";
+// import { useMutation, gql } from "@apollo/client";
+// import { useUser } from "../hooks/useUser";
 
 // const responseLogOut ={
 //     "status": "SUCCESS",
