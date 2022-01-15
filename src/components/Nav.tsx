@@ -38,7 +38,7 @@ export default function Nav() {
             </li>
             <li>
               {/* <Link to="/log-out-apollo">Log Out</Link> */}
-              <Link to="/log-out-rq">Log Out rq</Link>
+              <Link to="/log-out">Log Out</Link>
             </li>
           </>
         )}
