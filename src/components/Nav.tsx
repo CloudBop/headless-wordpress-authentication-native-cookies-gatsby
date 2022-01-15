@@ -1,18 +1,19 @@
 import * as React from "react";
 import { Link } from "gatsby";
 
-import useAuth from "../hooks/useAuth";
+import { useUser } from "../hooks/useUser";
 
 export default function Nav() {
-  const { loggedIn } = useAuth();
-
+  const { user } = useUser();
+  // console.log(`user`, user);
+  // console.log(`!!user`, !!user);
   return (
     <nav>
       <ul className="nav">
         <li>
           <Link to="/">Home</Link>
         </li>
-        {!loggedIn ? (
+        {!user?.viewer ? (
           <>
             <li>
               <Link to="/log-in">Log In</Link>
@@ -21,7 +22,7 @@ export default function Nav() {
               <Link to="/sign-up">Sign Up</Link>
             </li>
             <li>
-              <Link to="/query-demo">LoginRQ</Link>
+              <Link to="/query-demo">RQ-demo</Link>
             </li>
           </>
         ) : (
@@ -36,7 +37,8 @@ export default function Nav() {
               <Link to="/profile">Profile</Link>
             </li>
             <li>
-              <Link to="/log-out">Log Out</Link>
+              {/* <Link to="/log-out-apollo">Log Out</Link> */}
+              <Link to="/log-out-rq">Log Out rq</Link>
             </li>
           </>
         )}
