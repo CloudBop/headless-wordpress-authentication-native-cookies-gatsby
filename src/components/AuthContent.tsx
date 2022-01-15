@@ -3,19 +3,20 @@ import { useEffect, ReactNode } from "react";
 import { navigate } from "gatsby";
 
 import useAuth from "../hooks/useAuth";
+import { useUser } from "../hooks/useUser";
 
 export default function AuthContent({ children }: { children: ReactNode }) {
-  const { loggedIn, isLoading } = useAuth();
+  const { user } = useUser();
   // console.log(`loggedIn`, loggedIn);
   // console.log(`isLoading`, isLoading);
   // Navigate unauthenticated users to Log In page.
   useEffect(() => {
-    if (!isLoading && !loggedIn) {
+    if (!user?.viewer?.databaseId) {
       navigate("/log-in");
     }
-  }, [loggedIn, isLoading, navigate]);
+  }, [user?.viewer?.databaseId]);
 
-  if (loggedIn) {
+  if (user?.viewer) {
     return <>{children}</>;
   }
 

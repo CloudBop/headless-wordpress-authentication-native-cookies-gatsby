@@ -3,18 +3,19 @@ import { useEffect, ReactNode } from "react";
 import { navigate } from "gatsby";
 
 import useAuth from "../hooks/useAuth";
+import { useUser } from "../hooks/useUser";
 
 export default function UnAuthContent({ children }: { children: ReactNode }) {
-  const { loggedIn, loading } = useAuth();
+  const { user } = useUser();
 
   // Navigate authenticated users to Members page.
   useEffect(() => {
-    if (!loading && loggedIn) {
-      navigate('/members');
+    if (user?.viewer?.databaseId) {
+      navigate("/members");
     }
-  }, [loggedIn, loading, navigate]);
+  }, [user?.viewer?.databaseId]);
 
-  if (!loggedIn) {
+  if (!user?.viewer) {
     return <>{children}</>;
   }
 
