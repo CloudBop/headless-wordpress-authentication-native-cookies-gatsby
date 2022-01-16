@@ -28,6 +28,11 @@ import { wpgraphqlUserCredential } from "../wpgraphqlApi/cors";
 
 interface UseUser {
   user: User | null;
+  userLoading: Boolean;
+  userIsError: Boolean;
+  userIsSuccess: Boolean;
+  userError: {};
+  userStatusCode: string;
   updateUser: (user: User) => void;
   updateUserToo: () => void;
   clearUser: () => void;
@@ -36,7 +41,14 @@ interface UseUser {
 export function useUser(): UseUser {
   const queryClient = useQueryClient();
 
-  const { data: user } = useQuery(
+  const {
+    data: user,
+    isLoading: userLoading,
+    isError: userIsError,
+    isSuccess: userIsSuccess,
+    error: userError,
+    status: userStatusCode,
+  } = useQuery(
     queryKeys.user,
     // call useQuery to update user data from server
     ({ signal }) => wpgraphqlUserCredential(signal),
@@ -51,11 +63,6 @@ export function useUser(): UseUser {
       //    - User, if this is called from queryClient.setQueryData in updateUser()
       //         *or* from the getUser query function call
       onSuccess: (received: null | User) => {
-        console.log(
-          `==================\n==================\nwas this query re-ran`
-        );
-        console.log(`received`, received);
-        console.log(`user`, user);
         // if (!received) {
         //   // clearStoredUser();
         // } else {
@@ -88,7 +95,17 @@ export function useUser(): UseUser {
     console.log(`data`, data);
   }
 
-  return { user, updateUser, clearUser, updateUserToo };
+  return {
+    user,
+    updateUser,
+    clearUser,
+    updateUserToo,
+    userLoading,
+    userIsError,
+    userIsSuccess,
+    userError,
+    userStatusCode,
+  };
 }
 
 // now returning axiosResponsetype
