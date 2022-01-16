@@ -2,7 +2,7 @@ import * as React from "react";
 import { useEffect, ReactNode } from "react";
 import { navigate } from "gatsby";
 
-import useAuth from "../hooks/useAuth";
+// import useAuth from "../hooks/deprectated/useAuth";
 import { useUser } from "../hooks/useUser";
 
 export default function UnAuthContent({ children }: { children: ReactNode }) {
