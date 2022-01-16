@@ -143,3 +143,42 @@ export async function wpgraphqlUpdateUserProfile({ variables }) {
     return toJson;
   }
 }
+
+const CREATE_POST = gql`
+  mutation createPost($title: String!, $content: String!) {
+    createPost(input: { title: $title, content: $content, status: PUBLISH }) {
+      post {
+        databaseId
+      }
+    }
+  }
+`;
+
+export async function wpgraphqlCreateNewPost({ variables }) {
+  const graphQLClient = new GraphQLClient(endpoint, authHeaders);
+  try {
+    const result = await graphQLClient.request(CREATE_POST, variables);
+    const successResult = JSON.stringify(result, undefined, 2);
+    const toJson = JSON.parse(successResult);
+    // console.log(`toJson`, toJson);
+    return toJson;
+  } catch (error) {
+    // gql || wpgraphql error
+    const errorResult = JSON.stringify(error, undefined, 2);
+    const toJson = JSON.parse(errorResult);
+    // If GraphQL gives you a result with data, even if that result contains errors, it is not an `total` error.
+    if (!toJson?.response?.data) {
+      throw new Error("Something went wrong...");
+    }
+
+    if (
+      toJson?.response?.data?.sendPasswordResetEmail === null &&
+      toJson?.response.errors.length > 0
+    ) {
+      // throw errors to react-query
+      throw new Error(toJson?.response.errors[0].message);
+    }
+
+    return toJson;
+  }
+}

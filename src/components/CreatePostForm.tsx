@@ -22,19 +22,23 @@ export default function CreatePostForm() {
   );
   // const [createPost, { data, loading, error }] = useMutation(CREATE_POST);
 
-  const { data, isLoading, error } = useMutation(wpgraphqlCreateNewPost);
+  const {
+    data,
+    isLoading,
+    error,
+    mutate: mutateCreateNewPost,
+  } = useMutation(wpgraphqlCreateNewPost);
 
+  // this will be false if databaseId === 0
   const wasPostCreated = Boolean(data?.createPost?.post?.databaseId);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const values = Object.fromEntries(data);
-    // createPost({
-    //   variables: values,
-    // }).catch((error) => {
-    //   console.error(error);
-    // });
+    mutateCreateNewPost({
+      variables: values,
+    });
   }
 
   if (wasPostCreated) {
