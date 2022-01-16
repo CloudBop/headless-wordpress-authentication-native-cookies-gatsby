@@ -15,23 +15,6 @@ export default function LogInForm() {
     const { email, password } = Object.fromEntries(data);
     const res = await signin(`${email}`, `${password}`);
     console.log("🚀 ~ file: LogInForm.tsx ~ line 15 ~ handleSubmit ~ res", res);
-
-    // .then((res) => {
-    //   console.log(`check`);
-    // })
-    // .catch((err) => console.log(err));
-
-    // const result = cookieLogin({
-    //   login: email,
-    //   password,
-    // });
-    // will be undefined as async
-    // console.log(`result`, result);
-
-    // doesn't exist as rq is handleing this
-    // .catch((error) => {
-    //   console.error(error);
-    // });
   }
 
   return (
