@@ -1,11 +1,12 @@
-export interface Id {
-  // id: number;
-  id: string;
-}
+// export interface Id {
+// id: number;
+//   id: string;
+// }
 
 export interface NewUser {
   // id: string;
   viewer: {
+    id: string;
     databaseId: number;
     firstName: string;
     lastName: string;
@@ -17,4 +18,6 @@ export interface NewUser {
   };
 }
 
-export type User = Id & NewUser;
+export type User = NewUser;
+
+// export type User = Id & NewUser;
