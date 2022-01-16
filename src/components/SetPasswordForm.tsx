@@ -1,27 +1,9 @@
 import * as React from "react";
 import { useState } from "react";
-import { useMutation, gql } from "@apollo/client";
+// import { useMutation, gql } from "@apollo/client";
 import { Link } from "gatsby";
-
-const RESET_PASSWORD = gql`
-  mutation resetUserPassword(
-    $key: String!
-    $login: String!
-    $password: String!
-  ) {
-    resetUserPassword(
-      input: {
-        key: $key
-        login: $login
-        password: $password
-      }
-    ) {
-      user {
-        databaseId
-      }
-    }
-  }
-`;
+import { useMutation } from "react-query";
+import { wpgraphqlResetPassword } from "../wpgraphqlApi/userSettings";
 
 interface Props {
   resetKey: string;
@@ -29,16 +11,22 @@ interface Props {
 }
 
 export default function SetPasswordForm({ resetKey: key, login }: Props) {
-  const [password, setPassword] = useState('');
-  const [passwordConfirm, setPasswordConfirm] = useState('');
-  const [clientErrorMessage, setClientErrorMessage] = useState('');
-  const [resetPassword, { data, loading, error }] = useMutation(RESET_PASSWORD);
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [clientErrorMessage, setClientErrorMessage] = useState("");
+  // const [resetPassword, { data, loading, error }] = useMutation(RESET_PASSWORD);
+  const {
+    data,
+    mutate: resetPassword,
+    error,
+    isLoading,
+  } = useMutation(wpgraphqlResetPassword);
   const wasPasswordReset = Boolean(data?.resetUserPassword?.user?.databaseId);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault()
+    event.preventDefault();
     const isValid = validate();
-    if (!isValid) return
+    if (!isValid) return;
 
     resetPassword({
       variables: {
@@ -46,23 +34,24 @@ export default function SetPasswordForm({ resetKey: key, login }: Props) {
         login,
         password,
       },
-    }).catch(error => {
-      console.error(error);
     });
+    // .catch((error) => {
+    //   console.error(error);
+    // });
   }
 
   function validate() {
-    setClientErrorMessage('');
+    setClientErrorMessage("");
 
     const isPasswordLongEnough = password.length >= 5;
     if (!isPasswordLongEnough) {
-      setClientErrorMessage('Password must be at least 5 characters.');
+      setClientErrorMessage("Password must be at least 5 characters.");
       return false;
     }
 
     const doPasswordsMatch = password === passwordConfirm;
     if (!doPasswordsMatch) {
-      setClientErrorMessage('Passwords must match.');
+      setClientErrorMessage("Passwords must match.");
       return false;
     }
 
@@ -73,23 +62,21 @@ export default function SetPasswordForm({ resetKey: key, login }: Props) {
     return (
       <>
         <p>Your new password has been set.</p>
-        <Link to="/log-in">
-          Log in
-        </Link>
+        <Link to="/log-in">Log in</Link>
       </>
     );
   }
 
   return (
     <form method="post" onSubmit={handleSubmit}>
-      <fieldset disabled={loading} aria-busy={loading}>
+      <fieldset disabled={isLoading} aria-busy={isLoading}>
         <label htmlFor="new-password">Password</label>
         <input
           id="new-password"
           type="password"
           value={password}
           autoComplete="new-password"
-          onChange={event => setPassword(event.target.value)}
+          onChange={(event) => setPassword(event.target.value)}
           required
         />
         <label htmlFor="password-confirm">Confirm Password</label>
@@ -98,17 +85,17 @@ export default function SetPasswordForm({ resetKey: key, login }: Props) {
           type="password"
           value={passwordConfirm}
           autoComplete="new-password"
-          onChange={event => setPasswordConfirm(event.target.value)}
+          onChange={(event) => setPasswordConfirm(event.target.value)}
           required
         />
         {clientErrorMessage ? (
           <p className="error-message">{clientErrorMessage}</p>
         ) : null}
-        {error ? (
+        {error instanceof Error ? (
           <p className="error-message">{error.message}</p>
         ) : null}
-        <button type="submit" disabled={loading}>
-          {loading ? 'Saving...' : 'Save password'}
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? "Saving..." : "Save password"}
         </button>
       </fieldset>
     </form>
