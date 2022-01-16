@@ -16,9 +16,10 @@ export const wpgraphqlCookieLogin = async (variables: {}) => {
     const result = await graphQLClient.request(LOG_IN_COOKIE, variables);
     // const successResult = JSON.stringify(result, undefined, 2);
     // const toJson = JSON.parse(result);
-    console.log(`result`, result);
+    // console.log(`success result`, result);
     return result;
   } catch (error) {
+    // console.log(`failed`, error);
     const errorResult = JSON.stringify(error, undefined, 2);
     const toJson = JSON.parse(errorResult);
     // console.dir(toJson)
