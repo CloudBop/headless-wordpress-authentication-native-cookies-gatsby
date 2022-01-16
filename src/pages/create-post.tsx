@@ -1,13 +1,15 @@
 import * as React from "react";
 
-import useAuth from "../hooks/useAuth";
 import AuthContent from "../components/AuthContent";
 import Layout from "../components/Layout";
 import CreatePostForm from "../components/CreatePostForm";
+import { useUser } from "../hooks/useUser";
 
 export default function CreatePost() {
-  const { user } = useAuth();
-  const canCreatePosts = Boolean(user?.capabilities?.includes('publish_posts'));
+  const { user } = useUser();
+  const canCreatePosts = Boolean(
+    user?.viewer?.capabilities?.includes("publish_posts")
+  );
 
   return (
     <Layout>
