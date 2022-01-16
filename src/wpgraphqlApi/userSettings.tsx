@@ -127,16 +127,19 @@ export async function wpgraphqlUpdateUserProfile({ variables }) {
     // gql || wpgraphql error
     const errorResult = JSON.stringify(error, undefined, 2);
     const toJson = JSON.parse(errorResult);
-    // If GraphQL gives you a result with data, even if that result contains errors, it is not an error.
+    // If GraphQL gives you a result with data, even if that result contains errors, it is not an `total` error.
     if (!toJson?.response?.data) {
-      throw new Error();
+      throw new Error("Something went wrong...");
     }
+
     if (
       toJson?.response?.data?.sendPasswordResetEmail === null &&
       toJson?.response.errors.length > 0
     ) {
+      // throw errors to react-query
       throw new Error(toJson?.response.errors[0].message);
     }
+
     return toJson;
   }
 }
