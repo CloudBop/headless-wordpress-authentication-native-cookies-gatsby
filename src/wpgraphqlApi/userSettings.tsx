@@ -1,6 +1,53 @@
 import { gql, GraphQLClient } from "graphql-request";
 import { headers, authHeaders, endpoint } from "./headers";
 
+const REGISTER_USER = gql`
+  mutation registerUser(
+    $email: String!
+    $firstName: String!
+    $lastName: String!
+  ) {
+    registerUser(
+      input: {
+        username: $email
+        email: $email
+        firstName: $firstName
+        lastName: $lastName
+      }
+    ) {
+      user {
+        databaseId
+      }
+    }
+  }
+`;
+
+export async function wpgraphqlRegisterNewUser({ variables }) {
+  try {
+    const result = await graphQLClient.request(REGISTER_USER, variables);
+    // console.log(`result`, result);
+    const successResult = JSON.stringify(result, undefined, 2);
+    const toJson = JSON.parse(successResult);
+    console.log(`toJson`, toJson);
+    return toJson;
+  } catch (error) {
+    // gql || wpgraphql error
+    const errorResult = JSON.stringify(error, undefined, 2);
+    const toJson = JSON.parse(errorResult);
+    // If GraphQL gives you a result with data, even if that result contains errors, it is not an error.
+    if (!toJson?.response?.data) {
+      throw new Error();
+    }
+    if (
+      toJson?.response?.data?.sendPasswordResetEmail === null &&
+      toJson?.response.errors.length > 0
+    ) {
+      throw new Error(toJson?.response.errors[0].message);
+    }
+    return toJson;
+  }
+}
+
 const SEND_PASSWORD_RESET_EMAIL = gql`
   mutation sendPasswordResetEmail($username: String!) {
     sendPasswordResetEmail(input: { username: $username }) {
