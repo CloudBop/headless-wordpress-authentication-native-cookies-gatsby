@@ -10,7 +10,7 @@ import { useUser } from "./useUser";
 
 interface UseAuth {
   signin: (email: string, password: string) => Promise<AuthResponseType>;
-  signup: (email: string, password: string) => Promise<void>;
+  // signup: (email: string, password: string) => Promise<void>;
   signout: () => void;
 }
 
@@ -56,7 +56,8 @@ export function useAuthService(): UseAuth {
       .catch((err) => console.log(err));
     return response;
   }
-  async function signup(email: string, password: string): Promise<void> {}
+  // async function signup(email: string, password: string): Promise<void> {
+  // }
 
   function signout(): void {
     // clear user from stored user data
@@ -88,7 +89,7 @@ export function useAuthService(): UseAuth {
   // Return the user object and auth methods
   return {
     signin,
-    signup,
+    // signup,
     signout,
   };
 }

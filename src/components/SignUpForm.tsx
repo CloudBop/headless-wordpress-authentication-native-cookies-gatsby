@@ -1,54 +1,41 @@
 import * as React from "react";
-import { useMutation, gql } from "@apollo/client";
-import { Link } from "gatsby";
 
-const REGISTER_USER = gql`
-  mutation registerUser(
-    $email: String!
-    $firstName: String!
-    $lastName: String!
-  ) {
-    registerUser(
-      input: {
-        username: $email
-        email: $email
-        firstName: $firstName
-        lastName: $lastName
-      }
-    ) {
-      user {
-        databaseId
-      }
-    }
-  }
-`;
+import { Link } from "gatsby";
+import { useMutation } from "react-query";
+import { wpgraphqlRegisterNewUser } from "../wpgraphqlApi/userSettings";
 
 export default function SignUpForm() {
-  const [register, { data, loading, error }] = useMutation(REGISTER_USER);
+  const {
+    data,
+    mutate: registerUser,
+    isLoading,
+    error,
+  } = useMutation(wpgraphqlRegisterNewUser);
+
   const wasSignUpSuccessful = Boolean(data?.registerUser?.user?.databaseId);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const values = Object.fromEntries(data);
-    register({
+    // delagate side-effects to react-query
+    registerUser({
       variables: values,
-    }).catch(error => {
-      console.error(error);
     });
   }
 
   if (wasSignUpSuccessful) {
     return (
       <p>
-        Thanks! Check your email – an account confirmation link has been sent to you.
+        Thanks! Check your email – an account confirmation link has been sent to
+        you.
       </p>
-    )
+    );
   }
 
   return (
     <form method="post" onSubmit={handleSubmit}>
-      <fieldset disabled={loading} aria-busy={loading}>
+      <fieldset disabled={isLoading} aria-busy={isLoading}>
         <label htmlFor="sign-up-first-name">First name</label>
         <input
           id="sign-up-first-name"
@@ -73,21 +60,21 @@ export default function SignUpForm() {
           autoComplete="username"
           required
         />
-        {error ? (
-          (error.message.includes('This username is already registered') ? (
+        {error instanceof Error ? (
+          error.message.includes("This username is already registered") ? (
             <p className="error-message">
               You&#39;re already signed up! <Link to="/log-in">Log in</Link>
             </p>
           ) : (
             <p className="error-message">{error.message}</p>
-          ))
+          )
         ) : null}
-        <button type="submit" disabled={loading}>
-          {loading ? 'Signing up...' : 'Sign up'}
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? "Signing up..." : "Sign up"}
         </button>
       </fieldset>
       <p>
-        Already have an account? <Link to="/log-in"><a>Log in</a></Link>
+        Already have an account? <Link to="/log-in">Log in</Link>
       </p>
     </form>
   );

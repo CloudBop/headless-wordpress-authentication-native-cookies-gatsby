@@ -22,7 +22,7 @@ export default function LogOut() {
   // useEffect(() => {
   //   logOut();
   // }, [logOut]);
-  const { user } = useUser();
+  const { user, userLoading, userError } = useUser();
 
   if (user?.viewer) {
     // console.log(`object`);
@@ -32,15 +32,15 @@ export default function LogOut() {
   return (
     <div>
       <h1>Log Out</h1>
-      {/* {!called || loading ? (
+      {userLoading ? (
         <p>Logging out...</p>
-      ) : error ? (
-        <p>{error.message}</p>
-      ) : !loggedOut ? (
+      ) : userError instanceof Error ? (
+        <p>{userError.message}</p>
+      ) : user.viewer ? (
         <p>Unable to log out. Please reload the page and try again.</p>
       ) : (
         <p>You have been logged out.</p>
-      )} */}
+      )}
     </div>
   );
 }

@@ -28,10 +28,10 @@ import { wpgraphqlUserCredential } from "../wpgraphqlApi/cors";
 
 interface UseUser {
   user: User | null;
-  userLoading: Boolean;
-  userIsError: Boolean;
-  userIsSuccess: Boolean;
-  userError: {};
+  userLoading: boolean;
+  userIsError: boolean;
+  userIsSuccess: boolean;
+  userError: {} | Error;
   userStatusCode: string;
   updateUser: (user: User) => void;
   updateUserToo: () => void;

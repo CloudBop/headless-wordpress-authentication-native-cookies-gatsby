@@ -10,7 +10,6 @@ const LOG_IN_COOKIE = gql`
     }
   }
 `;
-//
 export const wpgraphqlCookieLogin = async (variables: {}) => {
   try {
     const result = await graphQLClient.request(LOG_IN_COOKIE, variables);
@@ -22,7 +21,18 @@ export const wpgraphqlCookieLogin = async (variables: {}) => {
     // console.log(`failed`, error);
     const errorResult = JSON.stringify(error, undefined, 2);
     const toJson = JSON.parse(errorResult);
-    // console.dir(toJson)
+    console.dir(toJson);
+
+    // If GraphQL gives you a result with data, even if that result contains errors, it is not an error.
+    if (!toJson?.response?.data) {
+      throw new Error("Something went wrong...");
+    }
+    if (
+      toJson?.response?.data?.loginWithCookies === null &&
+      toJson?.response.errors.length > 0
+    ) {
+      throw new Error(toJson?.response.errors[0].message);
+    }
     return toJson;
   }
 };
@@ -44,7 +54,6 @@ export const wpgraphqlCookieLogout = async () => {
   } catch (error) {
     const errorResult = JSON.stringify(error, undefined, 2);
     const toJson = JSON.parse(errorResult);
-    // console.dir(toJson)
     return toJson;
   }
 };
