@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { useMutation } from "react-query";
-import gql from "graphql-tag";
-import { GraphQLClient, request } from "graphql-request";
+import { GraphQLClient, request, gql } from "graphql-request";
 import useGQLReactQuery from "../hooks/useGQLQuery";
 const GET_COUNTRIES = gql`
   query {
