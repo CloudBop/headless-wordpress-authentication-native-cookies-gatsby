@@ -38,7 +38,7 @@ export default function LogInForm() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const { email, password } = Object.fromEntries(data);
-    const res = await loginUser({ login: email, password });
+    const res = loginUser({ login: email, password });
     console.log("🚀 ~ file: LogInForm.tsx ~ line 15 ~ handleSubmit ~ res", res);
   }
 
