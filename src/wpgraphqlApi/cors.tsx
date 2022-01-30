@@ -44,7 +44,9 @@ const LOG_OUT_COOKIE = gql`
     }
   }
 `;
-export const wpgraphqlCookieLogout = async () => {
+export const wpgraphqlCookieLogout = async (signal: AbortSignal) => {
+  // const authHeadersWithSignal = { ...authHeaders };
+  // const graphQLClient = new GraphQLClient(endpoint, authHeadersWithSignal);
   try {
     const result = await graphQLClient.request(LOG_OUT_COOKIE);
     // console.log(`result`, result);
