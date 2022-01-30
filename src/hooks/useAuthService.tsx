@@ -9,7 +9,8 @@ import {
 import { useUser } from "./useUser";
 
 interface UseAuth {
-  signin: (email: string, password: string) => Promise<AuthResponseType>;
+  // signin: (email: string, password: string) => string;
+  // signin: (email: string, password: string) => Promise<AuthResponseType>;
   // signup: (email: string, password: string) => Promise<void>;
   signout: () => void;
 }
@@ -24,44 +25,44 @@ type AuthResponseType =
 export function useAuthService(): UseAuth {
   const SERVER_ERROR = "There was an error contacting the server.";
   // const toast = useCustomToast();
-  const { clearUser, updateUser, updateUserToo } = useUser();
+  const {
+    clearUser,
+    // updateUser, updateUserToo
+  } = useUser();
 
-  async function signin(
-    email: string,
-    password: string
-  ): Promise<AuthResponseType> {
-    const response = wpgraphqlCookieLogin({ login: email, password });
-    response
-      .then((data) => {
-        //
-        if (data?.loginWithCookies?.status === "SUCCESS") {
-          updateUserToo();
-        }
-        //
-        else {
-          // console.log(`data`, data);
-          const { response, request } = data;
-          // console.log(`response`, response);
-          const isLoginSuccess = Boolean(response?.data?.loginWithCookies);
-          // console.log(`isLoginSuccess`, isLoginSuccess);
-          const loginStatus = Boolean(response?.data?.status);
+  // async function signin(email: string, password: string): <string> {
+  //   // const response = wpgraphqlCookieLogin({ login: email, password });
+  //   // response
+  //   //   .then((data) => {
+  //   //     //
+  //   //     if (data?.loginWithCookies?.status === "SUCCESS") {
+  //   //       updateUserToo();
+  //   //     }
+  //   //     //
+  //   //     else {
+  //   //       // console.log(`data`, data);
+  //   //       const { response, request } = data;
+  //   //       // console.log(`response`, response);
+  //   //       const isLoginSuccess = Boolean(response?.data?.loginWithCookies);
+  //   //       // console.log(`isLoginSuccess`, isLoginSuccess);
+  //   //       const loginStatus = Boolean(response?.data?.status);
 
-          if (isLoginSuccess) {
-            console.log("LOGIN USER");
-          }
+  //   //       if (isLoginSuccess) {
+  //   //         console.log("LOGIN USER");
+  //   //       }
 
-          const loginFailMessages = response?.errors;
-        }
-      })
-      .catch((err) => console.log(err));
-    return response;
-  }
+  //   //       const loginFailMessages = response?.errors;
+  //   //     }
+  //   //   })
+  //   //   .catch((err) => console.log(err));
+  //   return "response";
+  // }
   // async function signup(email: string, password: string): Promise<void> {
   // }
 
   function signout(): void {
     // clear user from stored user data
-    const response = wpgraphqlCookieLogout();
+    const response = wpgraphqlCookieLogout(undefined);
     response
       .then((data) => {
         //
@@ -88,7 +89,7 @@ export function useAuthService(): UseAuth {
 
   // Return the user object and auth methods
   return {
-    signin,
+    // signin,
     // signup,
     signout,
   };
