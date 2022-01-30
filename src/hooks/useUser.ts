@@ -63,6 +63,10 @@ export function useUser(): UseUser {
       //    - User, if this is called from queryClient.setQueryData in updateUser()
       //         *or* from the getUser query function call
       onSuccess: (received: null | User) => {
+        console.log(
+          "🚀 ~ file: useUser.ts ~ line 66 ~ useUser ~ received",
+          received
+        );
         // if (!received) {
         //   // clearStoredUser();
         // } else {
